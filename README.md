@@ -1,8 +1,6 @@
 # smart-model-service
 
-![ci](https://github.com/USER/REPO/actions/workflows/ci.yml/badge.svg)
-
-> After pushing to GitHub, replace `USER/REPO` in the badge URL above with your actual repository path.
+![ci](https://github.com/kubilayciftci/smart-model-service/actions/workflows/ci.yml/badge.svg)
 
 A cloud-native microservice for the Togg TruX platform that manages **Smart Models** (smart services such as OpenWeatherMap, smart devices such as a smart watch) and their **Smart Features** (callable capabilities such as "Get Weekly Forecast in a City"). The service exposes a gRPC API on Quarkus with PostgreSQL persistence, combining a strict relational core (immutable business identifiers, foreign keys, cascade semantics) with a JSONB column for domain-specific dynamic attributes. The stack ships with full observability (Prometheus metrics, OpenTelemetry traces to Jaeger, JSON logs with trace correlation), a one-command Docker Compose environment, and build-time-generated Kubernetes manifests for Minikube.
 
@@ -10,16 +8,17 @@ A cloud-native microservice for the Togg TruX platform that manages **Smart Mode
 
 ```mermaid
 flowchart LR
-    client[gRPC Client / grpcurl] -->|:9000 plaintext| grpcsvc[SmartModelGrpcService\n@RunOnVirtualThread]
-    grpcsvc --> mapper[SmartModelProtoMapper]
-    mapper --> modelsvc[SmartModelCatalogService]
-    mapper --> featsvc[SmartFeatureCatalogService]
-    modelsvc --> ports[(Domain Ports)]
+    client["gRPC client / grpcurl"] -->|"gRPC 9000 plaintext"| grpcsvc["SmartModelGrpcService<br/>@RunOnVirtualThread"]
+    grpcsvc --> mapper["SmartModelProtoMapper"]
+    mapper --> modelsvc["SmartModelCatalogService"]
+    mapper --> featsvc["SmartFeatureCatalogService"]
+    modelsvc --> ports[("Domain Ports")]
     featsvc --> ports
-    ports --> repo[Panache Repositories]
-    repo --> pg[(PostgreSQL + JSONB)]
-    grpcsvc -.traces.-> jaeger[Jaeger]
-    modelsvc -.metrics.-> prom[Prometheus] --> grafana[Grafana]
+    ports --> repo["Panache Repositories"]
+    repo --> pg[("PostgreSQL + JSONB")]
+    grpcsvc -. "traces" .-> jaeger["Jaeger"]
+    modelsvc -. "metrics" .-> prom["Prometheus"]
+    prom --> grafana["Grafana"]
 ```
 
 Requests arrive on the dedicated gRPC server (port 9000, plaintext, reflection enabled) and are dispatched on Java virtual threads, so the entire call path is plain synchronous code. The adapter layer maps protobuf messages to domain commands, the service layer orchestrates validation and transactions, and Panache repositories implement the domain ports against PostgreSQL. HTTP port 8080 serves only operational endpoints (metrics, health).
