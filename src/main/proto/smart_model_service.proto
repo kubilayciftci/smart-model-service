@@ -1,0 +1,145 @@
+syntax = "proto3";
+
+package togg.trux.smartmodel.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option java_package = "com.togg.trux.smartmodel.grpc";
+option java_multiple_files = true;
+
+service SmartModelService {
+  rpc CreateModel(CreateModelRequest) returns (SmartModel);
+  rpc GetModel(GetModelRequest) returns (SmartModel);
+  rpc UpdateModel(UpdateModelRequest) returns (SmartModel);
+  rpc DeleteModel(DeleteModelRequest) returns (DeleteModelResponse);
+  rpc SearchModels(SearchModelsRequest) returns (SearchModelsResponse);
+  rpc AddFeature(AddFeatureRequest) returns (SmartFeature);
+  rpc UpdateFeature(UpdateFeatureRequest) returns (SmartFeature);
+  rpc RemoveFeature(RemoveFeatureRequest) returns (RemoveFeatureResponse);
+  rpc SearchFeatures(SearchFeaturesRequest) returns (SearchFeaturesResponse);
+}
+
+message SmartModel {
+  string id = 1;
+  string identifier = 2;
+  string name = 3;
+  string type = 4;
+  string category = 5;
+  string attributes_json = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+  repeated SmartFeature features = 9;
+}
+
+message SmartModelSummary {
+  string id = 1;
+  string identifier = 2;
+  string name = 3;
+  string type = 4;
+  string category = 5;
+  string attributes_json = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+  int64 feature_count = 9;
+}
+
+message SmartFeature {
+  string id = 1;
+  string model_id = 2;
+  string identifier = 3;
+  string name = 4;
+  string type = 5;
+  string category = 6;
+  string attributes_json = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+}
+
+message FeatureInput {
+  string identifier = 1;
+  string name = 2;
+  string type = 3;
+  string category = 4;
+  string attributes_json = 5;
+}
+
+message CreateModelRequest {
+  string identifier = 1;
+  string name = 2;
+  string type = 3;
+  string category = 4;
+  string attributes_json = 5;
+  repeated FeatureInput features = 6;
+}
+
+message GetModelRequest {
+  string id = 1;
+}
+
+message UpdateModelRequest {
+  string id = 1;
+  string name = 2;
+  string type = 3;
+  string category = 4;
+  string attributes_json = 5;
+}
+
+message DeleteModelRequest {
+  string id = 1;
+}
+
+message DeleteModelResponse {
+}
+
+message SearchModelsRequest {
+  optional string name = 1;
+  optional string identifier = 2;
+  optional string type = 3;
+  optional string category = 4;
+  int32 page = 5;
+  int32 page_size = 6;
+}
+
+message SearchModelsResponse {
+  repeated SmartModelSummary models = 1;
+  int64 total_count = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
+
+message AddFeatureRequest {
+  string model_id = 1;
+  FeatureInput feature = 2;
+}
+
+message UpdateFeatureRequest {
+  string feature_id = 1;
+  string name = 2;
+  string type = 3;
+  string category = 4;
+  string attributes_json = 5;
+}
+
+message RemoveFeatureRequest {
+  string feature_id = 1;
+}
+
+message RemoveFeatureResponse {
+}
+
+message SearchFeaturesRequest {
+  optional string name = 1;
+  optional string identifier = 2;
+  optional string type = 3;
+  optional string category = 4;
+  optional string model_id = 5;
+  int32 page = 6;
+  int32 page_size = 7;
+}
+
+message SearchFeaturesResponse {
+  repeated SmartFeature features = 1;
+  int64 total_count = 2;
+  int32 page = 3;
+  int32 page_size = 4;
+}
