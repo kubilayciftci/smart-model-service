@@ -1,0 +1,37 @@
+{
+  "title": "Smart Model Service",
+  "uid": "smart-model-service",
+  "schemaVersion": 39,
+  "refresh": "10s",
+  "time": { "from": "now-30m", "to": "now" },
+  "panels": [
+    {
+      "id": 1, "type": "stat", "title": "Models Created",
+      "gridPos": { "x": 0, "y": 0, "w": 6, "h": 6 },
+      "targets": [{ "expr": "smartmodel_created_total", "refId": "A" }]
+    },
+    {
+      "id": 2, "type": "stat", "title": "Features Created",
+      "gridPos": { "x": 6, "y": 0, "w": 6, "h": 6 },
+      "targets": [{ "expr": "smartfeature_created_total", "refId": "A" }]
+    },
+    {
+      "id": 3, "type": "timeseries", "title": "Search Rate (5m)",
+      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 6 },
+      "targets": [
+        { "expr": "rate(smartmodel_search_total[5m])", "legendFormat": "models", "refId": "A" },
+        { "expr": "rate(smartfeature_search_total[5m])", "legendFormat": "features", "refId": "B" }
+      ]
+    },
+    {
+      "id": 4, "type": "timeseries", "title": "JVM Heap Used",
+      "gridPos": { "x": 0, "y": 6, "w": 12, "h": 6 },
+      "targets": [{ "expr": "sum(jvm_memory_used_bytes{area=\"heap\"})", "refId": "A" }]
+    },
+    {
+      "id": 5, "type": "timeseries", "title": "gRPC Server Requests (per method)",
+      "gridPos": { "x": 12, "y": 6, "w": 12, "h": 6 },
+      "targets": [{ "expr": "rate(grpc_server_processing_duration_seconds_count[5m])", "legendFormat": "{{method}}", "refId": "A" }]
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+global:
+  scrape_interval: 5s
+scrape_configs:
+  - job_name: smart-model-service
+    metrics_path: /q/metrics
+    static_configs:
+      - targets: ["smart-model-service:8080"]
