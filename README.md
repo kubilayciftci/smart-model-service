@@ -263,6 +263,14 @@ Available with the Compose stack (`make up`):
 | Metrics endpoint | <http://localhost:8080/q/metrics> | Prometheus exposition format (business + JVM metrics) |
 | Health | <http://localhost:8080/q/health> | Liveness `/q/health/live`, readiness `/q/health/ready`; gRPC health via `grpc.health.v1.Health/Check` |
 
+The pre-provisioned Grafana dashboard tracks the business counters alongside JVM heap and per-method gRPC request rates:
+
+![Grafana dashboard with business metrics, JVM heap and per-method gRPC request rates](docs/images/grafana-dashboard.png)
+
+Every gRPC request produces a full trace in Jaeger; with JDBC telemetry enabled, the SQL statements executed on behalf of the request appear as child spans inside the RPC span — here a single `CreateModel` call showing the connection acquisition, the identifier uniqueness check, and the cascaded model + feature inserts:
+
+![Jaeger trace of a CreateModel call with SQL child spans](docs/images/jaeger-trace.png)
+
 Business metrics exposed by the service:
 
 - `smartmodel_created_total`
